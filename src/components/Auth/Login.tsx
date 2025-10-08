@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+import { useTheme } from '@mui/material/styles' 
 import { useTranslation } from 'react-i18next'
 import {
   Container,
@@ -16,7 +17,7 @@ import {
   FormControl,
   InputLabel
 } from '@mui/material'
-import { Language, Visibility, VisibilityOff } from '@mui/icons-material'
+import { Language, Visibility, VisibilityOff, LocalHospital } from '@mui/icons-material'
 import { useAuth } from '../../contexts/AuthContext'
 import { useNotifications } from '../../contexts/NotificationContext'
 
@@ -31,6 +32,7 @@ const Login: React.FC = () => {
   const navigate = useNavigate()
   const { t, i18n } = useTranslation()
   const { showToast } = useNotifications()
+  const theme = useTheme()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -56,7 +58,7 @@ const Login: React.FC = () => {
           navigate('/admin')
           break
         default:
-          navigate('/login')
+          navigate('/') // Navigate to landing page if role is unknown
       }
     } catch (err: any) {
       setError(err.message || 'Login failed')
@@ -86,7 +88,7 @@ const Login: React.FC = () => {
             <Select
               value={i18n.language}
               onChange={(e) => changeLanguage(e.target.value)}
-              startAdornment={<Language />}
+              startAdornment={<Language sx={{ mr: 0.5 }} />}
             >
               <MenuItem value="en">English</MenuItem>
               <MenuItem value="hi">हिंदी</MenuItem>
@@ -94,105 +96,132 @@ const Login: React.FC = () => {
           </FormControl>
         </Box>
 
-        <Paper elevation={3} sx={{ padding: 4, width: '100%' }}>
-          <Box sx={{ textAlign: 'center', mb: 3 }}>
-            <Typography component="h1" variant="h4" color="primary" gutterBottom>
-              🏥 Village Health
+        <Paper 
+          elevation={4} 
+          sx={{ 
+            padding: { xs: 3, sm: 5 }, 
+            width: '100%', 
+            borderRadius: 3, 
+            boxShadow: '0 10px 30px rgba(0,0,0,0.1)' 
+          }}
+        >
+          
+          {/* Header mimicking shadcn style */}
+          <Box className="flex flex-col items-center gap-2 text-center" sx={{ mb: 4 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1, fontWeight: 500 }}>
+              <Box className="flex size-10 items-center justify-center rounded-md" sx={{ bgcolor: theme.palette.primary.main + '20', borderRadius: '8px' }}>
+                <LocalHospital color="primary" className="size-6" sx={{ fontSize: 32 }} />
+              </Box>
+            </Box>
+            <Typography component="h1" variant="h5" sx={{ fontWeight: 700, mt: 1 }}>
+              {t('welcome')} back to Village Health
             </Typography>
-            <Typography variant="h5" gutterBottom>
-              {t('welcome')}
-            </Typography>
-            <Typography variant="body1" color="text.secondary">
+            <Typography variant="body2" color="text.secondary">
               {t('login')} to access healthcare services
+              {/* Sign up link as description field */}
+              <Typography variant="body2" component="span" sx={{ display: 'block', mt: 1 }}>
+                Don&apos;t have an account?{' '}
+                <Link to="/register" style={{ textDecoration: 'none', color: theme.palette.primary.main, fontWeight: 600 }}>
+                  {t('register')}
+                </Link>
+              </Typography>
             </Typography>
           </Box>
-
+          
           {error && (
-            <Alert severity="error" sx={{ mb: 2 }}>
+            <Alert severity="error" sx={{ mb: 3, borderRadius: 2 }}>
               {error}
             </Alert>
           )}
 
           <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label={t('email')}
-              name="email"
-              autoComplete="email"
-              autoFocus
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              sx={{ mb: 2 }}
-              size="medium"
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label={t('password')}
-              type={showPassword ? 'text' : 'password'}
-              id="password"
-              autoComplete="current-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              sx={{ mb: 3 }}
-              size="medium"
-              InputProps={{
-                endAdornment: (
-                  <IconButton
-                    onClick={() => setShowPassword(!showPassword)}
-                    edge="end"
-                  >
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                )
-              }}
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ 
-                mt: 3, 
-                mb: 2, 
-                py: 1.5,
-                fontSize: '1.1rem'
-              }}
-              disabled={loading}
-            >
-              {loading ? <CircularProgress size={24} /> : t('login')}
-            </Button>
-            
-            <Box sx={{ textAlign: 'center', mt: 2 }}>
-              <Typography variant="body2">
-                Don't have an account?{' '}
-                <Link to="/register" style={{ textDecoration: 'none', color: '#1976d2' }}>
-                  {t('register')}
-                </Link>
-              </Typography>
-            </Box>
+            {/* FieldGroup equivalent: flex column with gap */}
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+              {/* Email Field */}
+              <Box>
+                {/* FieldLabel equivalent */}
+                <Typography component="label" htmlFor="email" sx={{ display: 'block', fontWeight: 600, mb: 0.5 }}>{t('email')}</Typography>
+                <TextField
+                  required
+                  fullWidth
+                  id="email"
+                  name="email"
+                  autoComplete="email"
+                  placeholder="name@example.com"
+                  autoFocus
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  size="medium"
+                  variant="outlined"
+                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+                />
+              </Box>
 
-            {/* Demo Credentials */}
-            <Box sx={{ mt: 3, p: 2, bgcolor: 'grey.100', borderRadius: 1 }}>
-              <Typography variant="body2" color="text.secondary" gutterBottom>
-                <strong>Demo Credentials:</strong>
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Villager: villager@test.com / password
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Doctor: doctor@test.com / password
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Admin: admin@test.com / password
-              </Typography>
+              {/* Password Field */}
+              <Box>
+                {/* FieldLabel equivalent */}
+                <Typography component="label" htmlFor="password" sx={{ display: 'block', fontWeight: 600, mb: 0.5 }}>{t('password')}</Typography>
+                <TextField
+                  required
+                  fullWidth
+                  name="password"
+                  id="password"
+                  autoComplete="current-password"
+                  placeholder="********"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  size="medium"
+                  type={showPassword ? 'text' : 'password'}
+                  variant="outlined"
+                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+                  InputProps={{
+                    endAdornment: (
+                      <IconButton
+                        onClick={() => setShowPassword(!showPassword)}
+                        edge="end"
+                        size="small"
+                        sx={{ mr: 1 }}
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    )
+                  }}
+                />
+              </Box>
+
+              {/* Login Button (Button equivalent) */}
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ 
+                  py: 1.5,
+                  fontSize: '1.1rem',
+                  borderRadius: 2,
+                  // Green gradient and hover effect
+                  background: `linear-gradient(45deg, ${theme.palette.primary.main} 30%, ${theme.palette.success.light} 90%)`,
+                  boxShadow: '0 3px 5px 2px rgba(46, 125, 50, .3)',
+                  transition: '0.3s',
+                  '&:hover': {
+                    background: theme.palette.primary.dark,
+                    boxShadow: '0 4px 8px 3px rgba(46, 125, 50, .4)',
+                  }
+                }}
+                disabled={loading}
+              >
+                {loading ? <CircularProgress size={24} sx={{ color: 'white' }} /> : t('login')}
+              </Button>
             </Box>
           </Box>
         </Paper>
+        
+        {/* Footer Text (FieldDescription equivalent) */}
+        <Typography variant="caption" color="text.secondary" sx={{ mt: 3, px: 3, textAlign: 'center' }}>
+          By clicking continue, you agree to our <Link to="#" style={{ color: theme.palette.secondary.main, textDecoration: 'none' }}>Terms of Service</Link>{' '}
+          and <Link to="#" style={{ color: theme.palette.secondary.main, textDecoration: 'none' }}>Privacy Policy</Link>.
+        </Typography>
+
+        {/* Removed Demo Credentials as per design request */}
       </Box>
     </Container>
   )

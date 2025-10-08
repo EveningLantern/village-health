@@ -1,3 +1,4 @@
+// eveninglantern/village-health/village-health-7c742f2974dcfe894d5504f48754dfa94b0b8035/src/App.tsx
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
 import { NotificationProvider } from './contexts/NotificationContext'
@@ -9,15 +10,20 @@ import AdminDashboard from './components/Dashboards/AdminDashboard'
 import ProtectedRoute from './components/Auth/ProtectedRoute'
 import Layout from './components/Layout/Layout'
 import Chat from './components/Communication/Chat'
+// Add new import for LandingPage
+import LandingPage from './components/LandingPage'
 
 function App() {
   return (
     <AuthProvider>
       <NotificationProvider>
         <Routes>
+          {/* Set the root path to the new LandingPage */}
+          <Route path="/" element={<LandingPage />} />
+          
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/" element={<Navigate to="/login" replace />} />
+          {/* Original line <Route path="/" element={<Navigate to="/login" replace />} /> is removed/replaced */}
           
           <Route element={<Layout />}>
             <Route 
