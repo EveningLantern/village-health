@@ -16,7 +16,6 @@ import {
   Select,
   MenuItem,
   IconButton,
-  // Removed useTheme from here
 } from '@mui/material'
 import { Language, Visibility, VisibilityOff, LocalHospital } from '@mui/icons-material'
 import { useAuth } from '../../contexts/AuthContext'
@@ -161,7 +160,7 @@ const Register: React.FC = () => {
           {/* Header mimicking shadcn style */}
           <Box className="flex flex-col items-center gap-2 text-center" sx={{ mb: 4 }}>
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1, fontWeight: 500 }}>
-              <Box className="flex size-10 items-center justify-center rounded-md" sx={{ bgcolor: theme.palette.primary.main + '20', borderRadius: '8px' }}>
+              <Box className="flex size-10 items-center justify-center rounded-md" sx={{ bgcolor: '#FBF6E9', borderRadius: '8px' }}>
                 <LocalHospital color="primary" className="size-6" sx={{ fontSize: 32 }} />
               </Box>
             </Box>
@@ -257,7 +256,7 @@ const Register: React.FC = () => {
                     variant="outlined"
                     sx={{ borderRadius: 2 }}
                     renderValue={(selected) => {
-                      if(false) {
+                      if (false) {
                         return <Typography sx={{ color: theme.palette.text.disabled }}>Select your role...</Typography>;
                       }
                       return t(selected);
@@ -384,13 +383,13 @@ const Register: React.FC = () => {
                   py: 1.5,
                   fontSize: '1.1rem',
                   borderRadius: 2,
-                  // Green gradient and hover effect
-                  background: `linear-gradient(45deg, ${theme.palette.primary.main} 30%, ${theme.palette.success.light} 90%)`,
-                  boxShadow: '0 3px 5px 2px rgba(46, 125, 50, .3)',
+                  // Green gradient and hover effect using new palette: #118B50 and #5DB996
+                  background: `linear-gradient(45deg, #118B50 30%, #5DB996 90%)`,
+                  boxShadow: '0 3px 5px 2px rgba(17, 139, 80, .3)',
                   transition: '0.3s',
                   '&:hover': {
                     background: theme.palette.primary.dark,
-                    boxShadow: '0 4px 8px 3px rgba(46, 125, 50, .4)',
+                    boxShadow: '0 4px 8px 3px rgba(17, 139, 80, .4)',
                   }
                 }}
                 disabled={loading}

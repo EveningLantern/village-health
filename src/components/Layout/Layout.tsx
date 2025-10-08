@@ -32,8 +32,10 @@ import {
   Language,
   PeopleAlt, // For Users (Admin)
   Assessment, // For Analytics (Admin)
-  ChevronLeft, // Icon for collapse
-  ChevronRight, // Icon for expand
+  ChevronLeft, 
+  ChevronRight, 
+  PushPin, // <-- Added Pin icon for pinned state
+  PushPinOutlined, // <-- Added Pin icon for unpinned state
 } from '@mui/icons-material'
 import { useAuth } from '../../contexts/AuthContext'
 import { useNotifications } from '../../contexts/NotificationContext'
@@ -44,8 +46,9 @@ const SIDEBAR_WIDTH_EXPANDED = 240; // Standard width for drawer/expanded sideba
 
 const Layout: React.FC = () => {
   const [drawerOpen, setDrawerOpen] = useState(false); // Mobile drawer state
-  // Start expanded for better initial UX, or start collapsed (false) for the icon-only look
-  const [isSidebarExpanded, setIsSidebarExpanded] = useState(false); // Desktop persistent sidebar state
+  // NEW STATE: isPinned locks the sidebar open. isHovered handles temporary expansion.
+  const [isPinned, setIsPinned] = useState(false); // Track if the user pinned it
+  const [isHovered, setIsHovered] = useState(false); // Track if the mouse is over it
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   
   const { user, logout } = useAuth();
@@ -53,6 +56,9 @@ const Layout: React.FC = () => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const theme = useTheme();
+
+  // DERIVED STATE: Determines the current visual state of the sidebar
+  const isEffectiveExpanded = isPinned || isHovered; 
 
   // Navigation Items Logic
   const getNavigationItems = (role: string | undefined) => {
@@ -172,15 +178,18 @@ const Layout: React.FC = () => {
   // --- Desktop Persistent Sidebar (Mimicking AppSidebar Left Pane) ---
   const PermanentSidebar = (
     <Box
+      onMouseEnter={() => !isPinned && setIsHovered(true)} // Expand on hover only if not pinned
+      onMouseLeave={() => !isPinned && setIsHovered(false)} // Collapse on mouse leave only if not pinned
       sx={{
-        width: isSidebarExpanded ? SIDEBAR_WIDTH_EXPANDED : SIDEBAR_WIDTH_ICON,
+        width: isEffectiveExpanded ? SIDEBAR_WIDTH_EXPANDED : SIDEBAR_WIDTH_ICON,
         flexShrink: 0,
         height: '100vh',
         bgcolor: theme.palette.background.paper,
         borderRight: `1px solid ${theme.palette.divider}`,
         overflowX: 'hidden',
         overflowY: 'auto',
-        position: 'fixed',
+        position: 'fixed', 
+        left: 0, // Fixes the blank space on the left
         top: 0,
         zIndex: theme.zIndex.drawer,
         transition: theme.transitions.create('width', {
@@ -190,28 +199,33 @@ const Layout: React.FC = () => {
         display: { xs: 'none', md: 'flex' }, // Only show on desktop
         flexDirection: 'column',
       }}
+      data-pinned={isPinned} 
     >
-      {/* Header with App Title/Icon and Collapse Button */}
+      {/* Header with App Title/Icon and Pin Button */}
       <Toolbar 
         disableGutters 
         sx={{ 
           minHeight: 64, // Standard Toolbar height
-          px: isSidebarExpanded ? 2 : 0, 
-          justifyContent: isSidebarExpanded ? 'space-between' : 'center',
+          px: isEffectiveExpanded ? 2 : 0, 
+          justifyContent: isEffectiveExpanded ? 'space-between' : 'center',
           borderBottom: `1px solid ${theme.palette.divider}`,
         }}
       >
-        <Box sx={{ display: isSidebarExpanded ? 'block' : 'none', ml: 1, width: '100%', overflow: 'hidden' }}>
+        <Box sx={{ display: isEffectiveExpanded ? 'block' : 'none', ml: 1, width: '100%', overflow: 'hidden' }}>
           <Typography variant="h6" color="primary" fontWeight={600} noWrap>
             Village Health
           </Typography>
         </Box>
         <IconButton 
-          onClick={() => setIsSidebarExpanded(!isSidebarExpanded)}
-          // Position icon correctly when expanded/collapsed
-          sx={{ ml: isSidebarExpanded ? 0 : 1, transition: 'none' }} 
+          onClick={() => setIsPinned(!isPinned)} // Toggle pin state
+          sx={{ 
+            ml: isEffectiveExpanded ? 0 : 1, 
+            transition: 'none',
+            color: isPinned ? theme.palette.primary.main : theme.palette.text.secondary,
+            cursor: 'pointer',
+          }} 
         >
-          {isSidebarExpanded ? <ChevronLeft /> : <ChevronRight />}
+          {isPinned ? <PushPin /> : <PushPinOutlined />}
         </IconButton>
       </Toolbar>
       
@@ -238,15 +252,15 @@ const Layout: React.FC = () => {
               placement="right" 
               key={item.text}
               // Disable tooltip if sidebar is expanded, as the label is visible
-              disableFocusListener={isSidebarExpanded}
-              disableHoverListener={isSidebarExpanded}
-              disableTouchListener={isSidebarExpanded}
+              disableFocusListener={isEffectiveExpanded}
+              disableHoverListener={isEffectiveExpanded}
+              disableTouchListener={isEffectiveExpanded}
             >
               <ListItem 
                 button 
                 onClick={() => navigate(cleanPath)}
                 sx={{ 
-                  justifyContent: isSidebarExpanded ? 'initial' : 'center',
+                  justifyContent: isEffectiveExpanded ? 'initial' : 'center',
                   minHeight: 48,
                   px: 2,
                   mx: 1,
@@ -263,7 +277,7 @@ const Layout: React.FC = () => {
                 <ListItemIcon
                   sx={{ 
                     minWidth: 0, 
-                    mr: isSidebarExpanded ? 3 : 'auto', 
+                    mr: isEffectiveExpanded ? 3 : 'auto', 
                     justifyContent: 'center',
                     color: isActive ? theme.palette.primary.main : theme.palette.text.secondary,
                     transition: 'color 0.3s',
@@ -273,7 +287,7 @@ const Layout: React.FC = () => {
                 </ListItemIcon>
                 <ListItemText 
                   primary={item.text} 
-                  sx={{ opacity: isSidebarExpanded ? 1 : 0 }} 
+                  sx={{ opacity: isEffectiveExpanded ? 1 : 0 }} 
                 />
               </ListItem>
             </Tooltip>
@@ -287,7 +301,7 @@ const Layout: React.FC = () => {
         <Box 
           onClick={handleProfileMenuOpen}
           sx={{ 
-            display: isSidebarExpanded ? 'flex' : 'none', 
+            display: isEffectiveExpanded ? 'flex' : 'none', 
             alignItems: 'center', 
             gap: 1, 
             p: 1, 
@@ -307,11 +321,11 @@ const Layout: React.FC = () => {
         </Box>
         
         {/* Show a logout icon when collapsed */}
-        <Tooltip title={t('logout')} placement="right" disableFocusListener disableHoverListener={isSidebarExpanded} disableTouchListener={isSidebarExpanded}>
+        <Tooltip title={t('logout')} placement="right" disableFocusListener disableHoverListener={isEffectiveExpanded} disableTouchListener={isEffectiveExpanded}>
             <IconButton 
                 onClick={handleLogout}
                 sx={{ 
-                    display: isSidebarExpanded ? 'none' : 'flex', 
+                    display: isEffectiveExpanded ? 'none' : 'flex', 
                     width: '100%', 
                     borderRadius: 2,
                     justifyContent: 'center',
@@ -377,7 +391,8 @@ const Layout: React.FC = () => {
     </Drawer>
   );
   
-  const sidebarWidth = isSidebarExpanded ? SIDEBAR_WIDTH_EXPANDED : SIDEBAR_WIDTH_ICON;
+  // Calculate final sidebar dimensions
+  const sidebarWidth = isEffectiveExpanded ? SIDEBAR_WIDTH_EXPANDED : SIDEBAR_WIDTH_ICON;
   const desktopSidebarSpacing = { 
     // Shift content and AppBar to the right by the width of the permanent sidebar
     ml: { md: `${sidebarWidth}px` } 
@@ -435,7 +450,8 @@ const Layout: React.FC = () => {
               aria-label="account of current user"
               onClick={handleProfileMenuOpen}
               color="inherit"
-              sx={{ display: { xs: 'block', md: isSidebarExpanded ? 'none' : 'block' } }}
+              // Hide this button on desktop only if the sidebar is expanded (since the profile link is visible in the expanded sidebar footer)
+              sx={{ display: { xs: 'block', md: isEffectiveExpanded ? 'none' : 'block' } }}
             >
               <Avatar sx={{ width: 32, height: 32 }}>
                 {user?.fullName.charAt(0)}

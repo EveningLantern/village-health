@@ -7,14 +7,24 @@ import App from './App.tsx'
 import './i18n/config.ts'
 import 'leaflet/dist/leaflet.css'
 
+// New Color Palette: #118B50 (Primary Dark), #5DB996 (Primary Medium/Light), #E3F0AF (Accent)
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#2e7d32', // Green for health theme
+      main: '#118B50', // Deep Green/Emerald
+      light: '#5DB996', // Medium Teal/Green for gradients/accents
     },
     secondary: {
-      main: '#1976d2', // Blue for trust
+      main: '#5DB996', // Setting secondary to the medium green accent
     },
+    success: {
+      main: '#118B50', // Aligning success with the new primary main color
+      light: '#5DB996',
+    },
+    background: {
+        default: '#FFFFFF', // Setting general background to white
+        paper: '#FFFFFF',   // Setting component background to white
+    }
   },
   typography: {
     fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',

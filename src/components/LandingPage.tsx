@@ -26,6 +26,7 @@ import {
 } from '@mui/icons-material';
 
 // Define the reusable style object for green gradient hover and rounded corners
+// New Palette: #118B50 (Dark), #5DB996 (Medium), #E3F0AF (Pale), #FBF6E9 (Lightest)
 const GreenHoverCardStyle = {
   // Rounded rectangle for containers
   borderRadius: 4, 
@@ -36,9 +37,9 @@ const GreenHoverCardStyle = {
   
   // Green gradient and lift effect on hover
   '&:hover': {
-    boxShadow: '0 10px 20px rgba(46, 125, 50, 0.5), 0 6px 6px rgba(46, 125, 50, 0.3)',
+    boxShadow: '0 10px 20px rgba(17, 139, 80, 0.5), 0 6px 6px rgba(17, 139, 80, 0.3)',
     transform: 'translateY(-5px)',
-    background: 'linear-gradient(135deg, #4caf50 0%, #2e7d32 100%)', // Green Gradient
+    background: 'linear-gradient(135deg, #5DB996 0%, #118B50 100%)', // Use #5DB996 and #118B50
     color: 'white', // Change text color to white
     
     // Target nested Typography and Icons to change their color on parent hover
@@ -74,7 +75,7 @@ const LandingPage: React.FC = () => {
     ...GreenHoverCardStyle,
     '&:hover': {
         ...GreenHoverCardStyle['&:hover'],
-        background: 'linear-gradient(45deg, #66bb6a 30%, #388e3c 100%)', // Slightly lighter gradient for buttons
+        background: 'linear-gradient(45deg, #118B50 30%, #5DB996 100%)', // Use new Primary Main/Light
     },
     // Override the default text color change on button hover for better contrast
     '&:hover .MuiSvgIcon-root': {
@@ -84,7 +85,7 @@ const LandingPage: React.FC = () => {
 
 
   return (
-    <Box sx={{ minHeight: '100vh', background: theme.palette.grey[50] }}>
+    <Box sx={{ minHeight: '100vh', background: '#FFFFFF' }}>
       {/* --- TOP NAVIGATION BAR --- */}
       <AppBar position="fixed" color="primary" elevation={2}>
         <Toolbar sx={{ justifyContent: 'space-between' }}>
@@ -199,7 +200,8 @@ const LandingPage: React.FC = () => {
                   display: 'flex', 
                   alignItems: 'center', 
                   justifyContent: 'center',
-                  backgroundImage: 'linear-gradient(160deg, #388e3c 0%, #a5d6a7 100%)',
+                  // New gradient using #118B50 (Dark) and #E3F0AF (Pale)
+                  backgroundImage: 'linear-gradient(160deg, #118B50 0%, #E3F0AF 100%)',
                   boxShadow: '0 10px 20px rgba(0,0,0,0.15)',
                   p: 3,
                 }}
@@ -247,7 +249,20 @@ const LandingPage: React.FC = () => {
         <Grid container spacing={4}>
           {/* Article Section - Bottom Left */}
           <Grid item xs={12} md={6}>
-            <Card sx={{ ...GreenHoverCardStyle, p: 3, bgcolor: theme.palette.primary.light + '10', height: '100%', '&:hover': { ...GreenHoverCardStyle['&:hover'], background: 'linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%)' } }}>
+            <Card 
+              sx={{ 
+                ...GreenHoverCardStyle, 
+                p: 3, 
+                // Lightest color #FBF6E9
+                bgcolor: '#FBF6E9', 
+                height: '100%', 
+                '&:hover': { 
+                  ...GreenHoverCardStyle['&:hover'], 
+                  // New hover gradient using #E3F0AF and #5DB996 
+                  background: 'linear-gradient(135deg, #E3F0AF 0%, #5DB996 100%)' 
+                } 
+              }}
+            >
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                 <Newspaper color="primary" sx={{ mr: 1 }} />
                 <Typography variant="h5" color="primary.dark" fontWeight={600}>
