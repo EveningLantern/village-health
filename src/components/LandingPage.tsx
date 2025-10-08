@@ -9,8 +9,9 @@ import {
   Button,
   Grid,
   Card,
-  CardContent,
   useTheme,
+  AppBar, // <-- Added
+  Toolbar, // <-- Added
 } from '@mui/material';
 import {
   Login,
@@ -83,8 +84,64 @@ const LandingPage: React.FC = () => {
 
 
   return (
-    <Box sx={{ background: theme.palette.grey[50], minHeight: '100vh', pt: 8, pb: 4 }}>
-      <Container maxWidth="lg">
+    <Box sx={{ minHeight: '100vh', background: theme.palette.grey[50] }}>
+      {/* --- TOP NAVIGATION BAR --- */}
+      <AppBar position="fixed" color="primary" elevation={2}>
+        <Toolbar sx={{ justifyContent: 'space-between' }}>
+          {/* Logo and Title */}
+          <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} component={RouterLink} to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+            <LocalHospital sx={{ mr: 1, color: 'white' }} />
+            <Typography variant="h6" component="div" sx={{ fontWeight: 600, color: 'white' }}>
+              Village Health
+            </Typography>
+          </Box>
+
+          {/* Nav Buttons */}
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Button
+              component={RouterLink}
+              to="/login"
+              color="inherit"
+              variant="outlined"
+              size="small"
+              startIcon={<Login />}
+              sx={{ 
+                  borderRadius: 2,
+                  borderColor: 'white',
+                  color: 'white',
+                  '&:hover': {
+                      bgcolor: 'rgba(255, 255, 255, 0.15)',
+                      borderColor: 'white',
+                  }
+              }}
+            >
+              Login
+            </Button>
+            <Button
+              component={RouterLink}
+              to="/register"
+              color="inherit"
+              variant="contained"
+              size="small"
+              startIcon={<PersonAdd />}
+              sx={{ 
+                  borderRadius: 2,
+                  bgcolor: theme.palette.success.light,
+                  '&:hover': {
+                      bgcolor: theme.palette.success.main,
+                  }
+              }}
+            >
+              Sign Up
+            </Button>
+          </Box>
+        </Toolbar>
+      </AppBar>
+      {/* Placeholder to prevent content overlap with fixed AppBar */}
+      <Toolbar />
+      {/* --- END TOP NAVIGATION BAR --- */}
+
+      <Container maxWidth="lg" sx={{ pt: 4, pb: 4 }}>
         {/* Hero Section: The Core Message */}
         <Paper elevation={8} sx={{ borderRadius: 6, p: { xs: 3, md: 8 }, mb: 6, overflow: 'hidden' }}>
           <Grid container spacing={6} alignItems="center">
@@ -236,7 +293,7 @@ const LandingPage: React.FC = () => {
                 variant="outlined"
                 color="secondary"
                 size="large"
-                sx={{ py: 1, px: 3 , maxWidth: 250, mx: 'auto', ...buttonHoverStyle, '&:hover': { ...buttonHoverStyle['&:hover'], color: 'white' } }}
+                sx={{ py: 1, px: 3, maxWidth: 250, mx: 'auto', ...buttonHoverStyle, '&:hover': { ...buttonHoverStyle['&:hover'], color: 'white' } }}
               >
                 Request a Demo
               </Button>
